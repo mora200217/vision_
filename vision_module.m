@@ -1,7 +1,7 @@
 close all;  
 
 % import image 
-DIR = 'data'; image_id = 6; 
+DIR = 'data'; image_id = 1; 
 path = join([DIR, "/", image_id, ".jpeg"], ""); 
 
 image = imread(path); 
@@ -20,26 +20,42 @@ th= 0.3; % From app tool
 
 [y_l, x_l, ch] = size(img_hsv); 
 norm_val = ones(1,3); 
+img_for_anal = img_hsv; 
 
 for col = 1:x_l
     for row = 1:y_l
         px_val = img_hsv(row, col, 2); 
         
+        %% White 
         if px_val < th
             img_hsv(row, col, :) = 255 * norm_val; 
         else 
             img_hsv(row, col, :) = 0 * norm_val; 
         end 
-            
+        %% For color :V #NoRacist
+        if abs(img_for_anal(row, col, 1) - 120 / 360) <= 50/360  && img_for_anal(row, col, 2) >= 0  && img_for_anal(row, col, 3) >= 0 % H 
+            img_for_anal(row, col, :) = 255 * norm_val;
+        else 
+            img_for_anal(row, col, :) = 0 * norm_val;
+        end 
     end 
 end 
 
+% 
+SE_green = strel('square', 4); 
+img_green_erode = imerode(img_for_anal(:,:,1), SE_green)
+
 img_hsv = im2bw(img_hsv); 
 
+figure(); 
 
+imshow(img_green_erode); 
+title('v:'); 
+hold off; 
+figure(); 
 
-se = strel('square', 2);
-se2 = strel('square', 4);
+se = strel('square', 1);
+se2 = strel('square', 2);
 img_e = imerode(img_hsv, se);
 img_d = imdilate(img_e, se2);
 
@@ -56,8 +72,9 @@ SE_open = strel('disk', 10);
 img_after_open = imopen(img_for_rois, SE_open)
 
 
-img_after_open = imerode(img_after_open, se); 
-
+img_after_open = imerode(img_after_open, se) + img_green_erode   ; 
+img_after_open = imdilate(img_after_open , se)
+figure(); 
 imshow(img_after_open)
 %props 
 
@@ -101,48 +118,48 @@ plot(centroids(:,1),centroids(:,2),'r*')
 
 %% Identify 
 % % edge Canny
-% img_edge = edge(img_d, 'Canny'); 
-% 
-% imshow(img_edge); 
-% 
-% [H, T, R] = hough(img_edge);
-% 
-% figure(); 
-% 
-% 
-% 
-% imshow(imadjust(rescale(H)),'XData',T,'YData',R,...
-%       'InitialMagnification','fit');
-%  axis on, axis normal, hold on;
-% colormap(gca,hot);
-% 
-% P  = houghpeaks(H,5,'threshold',ceil(0.01*max(H(:))));
-% x = T(P(:,2)); y = R(P(:,1));
-% plot(x,y,'.','color','green', 'markerSize', 20);
-% hold off ; 
-% 
-% % Hough lines from peaks
-% 
-% BW = im2gray(image)
-% 
-% hold off; 
-% lines = houghlines(BW,T,R,P,'FillGap',5,'MinLength',0.2);
-% figure(), imshow(BW), hold on
-% 
-% max_len = 0;
-% for k = 1:length(lines)
-%    xy = [lines(k).point1; lines(k).point2];
-%    plot(xy(:,1),xy(:,2),'LineWidth',2,'Color','green');
-% 
-%    % Plot beginnings and ends of lines
-%    plot(xy(1,1),xy(1,2),'x','LineWidth',2,'Color','yellow');
-%    plot(xy(2,1),xy(2,2),'x','LineWidth',2,'Color','red');
-% 
-%    % Determine the endpoints of the longest line segment
-%    len = norm(lines(k).point1 - lines(k).point2);
-%    if ( len > max_len)
-%       max_len = len;
-%       xy_long = xy;
-%    end
-% end
+img_edge = edge(img_d, 'Canny'); 
+
+imshow(img_edge); 
+
+[H, T, R] = hough(img_edge);
+
+figure(); 
+
+
+
+imshow(imadjust(rescale(H)),'XData',T,'YData',R,...
+      'InitialMagnification','fit');
+ axis on, axis normal, hold on;
+colormap(gca,hot);
+
+P  = houghpeaks(H,5,'threshold',ceil(0.01*max(H(:))));
+x = T(P(:,2)); y = R(P(:,1));
+plot(x,y,'.','color','green', 'markerSize', 20);
+hold off ; 
+
+% Hough lines from peaks
+
+BW = im2gray(image)
+
+hold off; 
+lines = houghlines(BW,T,R,P,'FillGap',20,'MinLength',0.2);
+figure(), imshow(BW), hold on
+
+max_len = 0;
+for k = 1:length(lines)
+   xy = [lines(k).point1; lines(k).point2];
+   plot(xy(:,1),xy(:,2),'LineWidth',2,'Color','green');
+
+   % Plot beginnings and ends of lines
+   plot(xy(1,1),xy(1,2),'x','LineWidth',2,'Color','yellow');
+   plot(xy(2,1),xy(2,2),'x','LineWidth',2,'Color','red');
+
+   % Determine the endpoints of the longest line segment
+   len = norm(lines(k).point1 - lines(k).point2);
+   if ( len > max_len)
+      max_len = len;
+      xy_long = xy;
+   end
+end
 
