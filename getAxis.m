@@ -99,8 +99,8 @@ function [axes, ptsCloud] = getAxis(img, I)
         % Reflection in xy-plane
         center = center + [box_corner 0]; 
         % Extremes of axis 
-        p_0 = (center - orientation) .* [1, 1, -1]; 
-        p_1 = (center + orientation) .* [1, 1, -1] ; 
+        p_0 = (center - orientation) .* [1, 1, -1]; % Reflection z
+        p_1 = (center + orientation) .* [1, 1, -1]; % Reflection z
 
         axis_x = [p_0(1), p_1(1)];
         axis_y = [p_0(2), p_1(2)];
@@ -116,5 +116,5 @@ function [axes, ptsCloud] = getAxis(img, I)
         
         
     end
-    hold off; 
+    % hold off; 
 end 
