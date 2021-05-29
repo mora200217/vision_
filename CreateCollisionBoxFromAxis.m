@@ -19,15 +19,16 @@ y = center(2); % (mm)
 z = center(3); % (mm)
 %% Parameters
 % angles = [ beta alpha gamma]; % Euler Angles 
-position = [ x y z];  % Centroid Position 
+position = [ x y z] /1000;
+position = position + [0 0.2 0.2]% Centroid Position 
 %% Transformations
 disp(ax)
 rotm = axang2rotm([ax theta]);
 th = trvec2tform(position) *  rotm2tform(rotm); % Create 
 %% Box Collision parameters
 
-H= 100;  % Height  (mm)
-R = 25 ; % Radius (mm)
+H= 0.1;  % Height  (mm)
+R = 0.025 ; % Radius (mm)
 
 % Create collision box -------------
 cb = collisionBox(2 * R , 2 * R, H); 

@@ -6,7 +6,7 @@ function [collisionboxes] = GetCollisionBoxesFromRGBD(img, I)
 [N, val] = size(axes);
 % collisionboxes = zeros(N, 1); 
 for i = 1:N
-    collisionboxes(i) = CreateCollisionBoxFromAxis(axes(i, :))
+    collisionboxes(i) = CreateCollisionBoxFromAxis(axes(i, :));
     %hold on; 
     %show(cb); 
 end 

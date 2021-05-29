@@ -50,10 +50,10 @@ function [axes, ptsCloud] = getAxis(img, I)
     % get de pc of the RGB image 
     [pts] = createPC(img, I); 
     % Show 
-    pcshow(pts, 'VerticalAxisDir', "Up")
-    xlabel("x / mm"); 
-    ylabel("y / mm"); 
-    zlabel("z / mm"); 
+    %pcshow(pts, 'VerticalAxisDir', "Up")
+%     xlabel("x / mm"); 
+%     ylabel("y / mm"); 
+%     zlabel("z / mm"); 
 
     hold on; 
     
@@ -106,7 +106,7 @@ function [axes, ptsCloud] = getAxis(img, I)
         axis_y = [p_0(2), p_1(2)];
         axis_z = [p_0(3), p_1(3)];
         
-        plot3(axis_x, axis_y, axis_z, "LineWidth", 5);
+        %plot3(axis_x, axis_y, axis_z, "LineWidth", 5);
         
         
         % Final Axis 
